@@ -6,7 +6,7 @@ import org.jsoup.select.Elements;
 
 import java.io.*;
 
-public class MutiThreadingGetTrainInfo extends Thread {
+public class MutilThreadingGetTrainInfo extends Thread {
 
 
     public static void main(String[] agrs) {
@@ -19,20 +19,20 @@ public class MutiThreadingGetTrainInfo extends Thread {
             BufferedReader reader = new BufferedReader(new FileReader(new File(stationPairs)));
 
             int id = new File(trainsInfo).listFiles().length + 1;
-            MutiThreadingGetTrainInfo.writer =
+            MutilThreadingGetTrainInfo.writer =
                     new BufferedWriter(new FileWriter(new File(trainsInfo + id + ".txt")));
 
             String line;
             line = reader.readLine();
             while (line != null) {
-                if (MutiThreadingGetTrainInfo.ThreadCount > MutiThreadingGetTrainInfo.MaxThreadCount) {
+                if (MutilThreadingGetTrainInfo.ThreadCount > MutilThreadingGetTrainInfo.MaxThreadCount) {
                     Thread.sleep(5000);
                     continue;
                 }
 
-                new MutiThreadingGetTrainInfo(line, MutiThreadingGetTrainInfo.writer).start();
-                synchronized (MutiThreadingGetTrainInfo.ThreadCountLock) {
-                    MutiThreadingGetTrainInfo.ThreadCount++;
+                new MutilThreadingGetTrainInfo(line, MutilThreadingGetTrainInfo.writer).start();
+                synchronized (MutilThreadingGetTrainInfo.ThreadCountLock) {
+                    MutilThreadingGetTrainInfo.ThreadCount++;
 
                 }
                 line = reader.readLine();
@@ -59,7 +59,7 @@ public class MutiThreadingGetTrainInfo extends Thread {
 
     private String line;
 
-    MutiThreadingGetTrainInfo(String line, BufferedWriter writer) {
+    MutilThreadingGetTrainInfo(String line, BufferedWriter writer) {
         this.line = line;
     }
 
@@ -71,8 +71,8 @@ public class MutiThreadingGetTrainInfo extends Thread {
         System.out.println(url);
         GetTrainInfo.getTrainInfo(url,writer);
         //getTrainInfo(url, writer);
-        MutiThreadingGetTrainInfo.UrlNum++;
-        System.out.println("****" + MutiThreadingGetTrainInfo.UrlNum + "*******");
+        MutilThreadingGetTrainInfo.UrlNum++;
+        System.out.println("****" + MutilThreadingGetTrainInfo.UrlNum + "*******");
         synchronized (ThreadCountLock) {
             ThreadCount--;
         }
