@@ -1,5 +1,5 @@
 package Unility;
-//        String url = "http://webresource.c-ctrip.com/ResTrainOnline/R1/TrainBooking/JS/station_gb2312.js";
+
 
 import java.io.*;
 import java.util.LinkedList;
@@ -9,80 +9,60 @@ public class GetTrainCode {
     public static final String station = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\file\\station.txt";
     public static final String stations = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\file\\stations.txt";
     public static final String stationPairs = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\file\\stationPairs.txt";
-
+//    String url = "http://webresource.c-ctrip.com/ResTrainOnline/R1/TrainBooking/JS/station_gb2312.js";
     public static void main(String[] args) {
 
-        //GetTrainCode.getTrainCode();
-        // GetTrainCode.getTrainPair();
+//        GetTrainCode.getTrainCode(station,stations);
+        GetTrainCode.getTrainPair(stations,stationPairs);
         System.out.println("###");
     }
 
-    public static void getTrainCode() {
+    public static void getTrainCode(String station,String stations) {
         String content = null;
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(new File(GetTrainCode.station)));
+        try (BufferedReader reader = new BufferedReader(new FileReader(new File(station)))) {
             content = reader.readLine();
-            reader.close();
-
-        } catch (FileNotFoundException FileNotFound) {
-            System.err.println("File not found!" + FileNotFound);
-            System.exit(1);
         } catch (IOException IOException) {
-            System.err.println("can't read the file " + GetTrainCode.station + IOException);
+            System.err.println("can't read the file " + station + IOException);
         }
 
-        String[] stations = content.split(GetTrainCode.REGEX);
+        String[] sta = content.split(GetTrainCode.REGEX);
 
-        try {
-
-            BufferedWriter writer = new BufferedWriter(new FileWriter(new File(GetTrainCode.stations)));
-            for (int i = 0; i < stations.length; i = i + 5) {
-                System.out.println("stastion:" + stations[i] + "\tcode:" + stations[i + 1]);
-                writer.write(stations[i] + "," + stations[i + 1] + "\n");
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(new File(stations)))) {
+            for (int i = 0; i < sta.length; i = i + 5) {
+                System.out.println("stastion:" + sta[i] + "\tcode:" + sta[i + 1]);
+                writer.write(sta[i] + "," + sta[i + 1] + "\n");
                 writer.flush();
             }
-            writer.close();
         } catch (IOException IOExcepion) {
             System.err.println(IOExcepion);
         }
-
     }           //getTrainCode
 
+    public static void getTrainPair(String stations,String stationPairs) {
 
-    public static void getTrainPair() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(new File(stations)));
+             BufferedWriter writer = new BufferedWriter(new FileWriter(new File(stationPairs)));) {
 
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(new File(GetTrainCode.stations)));
-
-            LinkedList<String> stations = new LinkedList<String>();
-
+            LinkedList<String> stas = new LinkedList<String>();
             String line = null;
+
             while ((line = reader.readLine()) != null) {
-                stations.add(line);
+                stas.add(line);
             }
-            reader.close();
 
-            BufferedWriter writer = new BufferedWriter(new FileWriter(new File(GetTrainCode.stationPairs)));
-
-            for (int i = 0; i < stations.size(); i++) {
-                for (int j = 0; j < stations.size(); j++) {
+            for (int i = 0; i < stas.size(); i++) {
+                for (int j = 0; j < stas.size(); j++) {
                     if (i != j) {
-                        //System.out.println(stations.get(i)+","+stations.get(j));
+                        //System.out.println(stas.get(i)+","+stas.get(j));
                         System.out.println(i);
-                        writer.write(stations.get(i) + "," + stations.get(j) + "\n");
+                        writer.write(stas.get(i) + "," + stas.get(j) + "\n");
                         writer.flush();
-                    }
-
+                    }       //if
                 }           //j
             }               //i
-            writer.close();
-
         } catch (Exception IOException) {
             System.err.println(IOException);
         }
-
-
     }           //getTrainPair
 
-
-}
+}               //GetTrainCode

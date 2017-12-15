@@ -1,0 +1,12 @@
+北京,beijing
+大连,dalian
+郑州,zhengzhou
+兰州,lanzhou
+昆明,kunming
+广州,guangzhou
+哈尔滨,haerbin
+上海,shanghai
+西安,xian
+沈阳,shenyang3
+呼和浩特,huhehaote
+长春,changchun
