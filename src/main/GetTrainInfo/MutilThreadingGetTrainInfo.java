@@ -1,9 +1,5 @@
 package GetTrainInfo;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import java.io.*;
 
 public class MutilThreadingGetTrainInfo {
@@ -28,7 +24,7 @@ public class MutilThreadingGetTrainInfo {
 
     public static int UrlNum = 0;
 
-    public static String phantomjsPath = null;
+    public  String phantomjsPath = null;
 
     MutilThreadingGetTrainInfo(String phantomjsPath, String trainsInfo, String stationPairs) {
 
@@ -53,7 +49,7 @@ public class MutilThreadingGetTrainInfo {
                     continue;
                 }
 
-                new ParseJs(writer, line).start();
+                new ParseJs(writer, line,phantomjsPath).start();
                 synchronized (ParseJs.ThreadCount) {
                     ParseJs.ThreadCount++;
 
@@ -79,10 +75,11 @@ class ParseJs extends Thread {
 
     private String line;
     private BufferedWriter writer;
-
-    public ParseJs(BufferedWriter writer, String line) {
+    private String phantomjsPath;
+    public ParseJs(BufferedWriter writer, String line,String phantomjsPath) {
         this.line = line;
         this.writer = writer;
+        this.phantomjsPath= phantomjsPath;
     }
 
     public void run() {
@@ -90,7 +87,7 @@ class ParseJs extends Thread {
         String[] stations = line.split(splitChar);
         String url = "http://trains.ctrip.com/TrainBooking/Search.aspx?from=" + stations[1] + "&to=" + stations[3] + "&day=2";
         System.out.println(url);
-        getTrainInfo(writer, url);
+        GetTrainInfo.getTrainInfo(writer, url,phantomjsPath);
         MutilThreadingGetTrainInfo.UrlNum++;
         System.out.println("****" + MutilThreadingGetTrainInfo.UrlNum + "*******");
         synchronized (ThreadCount) {
@@ -98,52 +95,4 @@ class ParseJs extends Thread {
         }
     }           //run
 
-
-    private void getTrainInfo(BufferedWriter writer, String url) {
-
-        try {
-            Runtime rt = Runtime.getRuntime();
-            Process phantomjs = rt.exec(MutilThreadingGetTrainInfo.phantomjsPath + "phantomjs.exe " + MutilThreadingGetTrainInfo.phantomjsPath + "code.js " + url);
-
-            InputStream inputStream = phantomjs.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            StringBuilder doc = new StringBuilder();
-            String tmp;
-            while ((tmp = reader.readLine()) != null) {
-                doc.append(tmp);
-                //System.out.println(tmp);
-            }
-
-
-            Elements tbody = Jsoup.parse(doc.toString(), "UTF-8").getElementsByClass("tbody");
-
-            for (Element i : tbody) {
-
-                String train = i.getElementsByClass("w1").text().split(" ")[0];
-                String times[] = i.getElementsByClass("w2").text().split(" ");
-                String stations[] = i.getElementsByClass("w3").text().split(" ");
-
-                String startTime = times[0];
-                String arriveTime = times[1];
-                int day = times.length == 2 ? 0 : Integer.parseInt(times[2]);
-                String startStation = stations[1];
-                String arriveStation = stations[3];
-
-
-                System.out.print("train: " + train + "\t\t"); //车次
-                System.out.print("start time: " + startTime + "\t\t");
-                System.out.print("arrive time: " + arriveTime + "\t\t");
-                System.out.print("+" + day + "\t");
-                System.out.print("start station: " + startStation + "\t\t");
-                System.out.println("arrive station: " + arriveStation);          //
-
-
-                writer.write(train + "," + startTime + "," + arriveTime + "," + day + "," + startStation + "," + arriveStation + "\n");
-                writer.flush();
-                reader.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }               //getTrainInfo
 }
