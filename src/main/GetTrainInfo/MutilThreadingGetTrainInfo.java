@@ -6,33 +6,56 @@ import org.jsoup.select.Elements;
 
 import java.io.*;
 
-public class MutilThreadingGetTrainInfo extends Thread {
-
+public class MutilThreadingGetTrainInfo {
 
     public static void main(String[] agrs) {
         Long begin = System.currentTimeMillis();
 
-        final String stationPairs = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\file\\stationPairs.txt";
+        final String phantomjsPath = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\conf\\";
         final String trainsInfo = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\file\\MutiThreading\\";
+        final String stationPairs = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\file\\stationPairs.txt";
+
+        new MutilThreadingGetTrainInfo(phantomjsPath, trainsInfo, stationPairs).begin();
+
+        Long end = System.currentTimeMillis();
+        Long time = (end - begin) / 1000;
+        System.out.println("The program has run " + time / 60 + " mins " + (end - begin) % 60 + " seconds");
+    }           //main
+
+
+    private BufferedWriter writer = null;
+    private BufferedReader reader = null;
+
+    public static int UrlNum = 0;
+
+    public static String phantomjsPath = null;
+
+    MutilThreadingGetTrainInfo(String phantomjsPath, String trainsInfo, String stationPairs) {
+
+        this.phantomjsPath = phantomjsPath;
+        try {
+            this.reader = new BufferedReader(new FileReader(new File(stationPairs)));
+            int id = new File(trainsInfo).listFiles().length + 1;
+            this.writer = new BufferedWriter(new FileWriter(new File(trainsInfo + id + ".txt")));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void begin() {
 
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(new File(stationPairs)));
-
-            int id = new File(trainsInfo).listFiles().length + 1;
-            MutilThreadingGetTrainInfo.writer =
-                    new BufferedWriter(new FileWriter(new File(trainsInfo + id + ".txt")));
-
             String line;
             line = reader.readLine();
             while (line != null) {
-                if (MutilThreadingGetTrainInfo.ThreadCount > MutilThreadingGetTrainInfo.MaxThreadCount) {
+                if (ParseJs.ThreadCount > ParseJs.MaxThreadCount) {
                     Thread.sleep(5000);
                     continue;
                 }
 
-                new MutilThreadingGetTrainInfo(line, MutilThreadingGetTrainInfo.writer).start();
-                synchronized (MutilThreadingGetTrainInfo.ThreadCountLock) {
-                    MutilThreadingGetTrainInfo.ThreadCount++;
+                new ParseJs(writer, line).start();
+                synchronized (ParseJs.ThreadCount) {
+                    ParseJs.ThreadCount++;
 
                 }
                 line = reader.readLine();
@@ -41,49 +64,46 @@ public class MutilThreadingGetTrainInfo extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Long end = System.currentTimeMillis();
-        Long time = (end - begin) / 1000;
-        System.out.println("The program has run " + time / 60 + " mins " + (end - begin) % 60 + " seconds");
-    }           //main
 
 
-
-    public static BufferedWriter writer = null;
-    public static int UrlNum = 0;
-    private static final String phantomjsPath = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\conf\\";
-    private static final String splitChar = ",";
-
-    public static int ThreadCount = 0;
-    public final static int MaxThreadCount = 8;
-    public final static Object ThreadCountLock = new Object();
-
-    private String line;
-
-    MutilThreadingGetTrainInfo(String line, BufferedWriter writer) {
-        this.line = line;
     }
 
-    @Override
+}
+
+
+class ParseJs extends Thread {
+    private static final String splitChar = ",";
+
+    public static Integer ThreadCount = 0;
+    public final static int MaxThreadCount = 8;
+
+    private String line;
+    private BufferedWriter writer;
+
+    public ParseJs(BufferedWriter writer, String line) {
+        this.line = line;
+        this.writer = writer;
+    }
+
     public void run() {
         System.out.println("now in thread " + Thread.currentThread().getName());
         String[] stations = line.split(splitChar);
         String url = "http://trains.ctrip.com/TrainBooking/Search.aspx?from=" + stations[1] + "&to=" + stations[3] + "&day=2";
         System.out.println(url);
-        GetTrainInfo.getTrainInfo(url,writer);
-        //getTrainInfo(url, writer);
+        getTrainInfo(writer, url);
         MutilThreadingGetTrainInfo.UrlNum++;
         System.out.println("****" + MutilThreadingGetTrainInfo.UrlNum + "*******");
-        synchronized (ThreadCountLock) {
+        synchronized (ThreadCount) {
             ThreadCount--;
         }
     }           //run
 
 
-    private void getTrainInfo(String url, BufferedWriter writer) {
+    private void getTrainInfo(BufferedWriter writer, String url) {
 
         try {
             Runtime rt = Runtime.getRuntime();
-            Process phantomjs = rt.exec(phantomjsPath + "phantomjs.exe " + phantomjsPath + "code.js " + url);
+            Process phantomjs = rt.exec(MutilThreadingGetTrainInfo.phantomjsPath + "phantomjs.exe " + MutilThreadingGetTrainInfo.phantomjsPath + "code.js " + url);
 
             InputStream inputStream = phantomjs.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -91,6 +111,7 @@ public class MutilThreadingGetTrainInfo extends Thread {
             String tmp;
             while ((tmp = reader.readLine()) != null) {
                 doc.append(tmp);
+                //System.out.println(tmp);
             }
 
 
@@ -126,4 +147,3 @@ public class MutilThreadingGetTrainInfo extends Thread {
         }
     }               //getTrainInfo
 }
-
