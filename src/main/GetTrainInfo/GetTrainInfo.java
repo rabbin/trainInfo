@@ -6,8 +6,8 @@ import org.jsoup.select.Elements;
 
 import java.io.*;
 
-public class GetTrainInfo {
-    public static void getTrainInfo(BufferedWriter writer, String url, String phantomjsPath) {
+public class GetTrainInfo  implements Serializable{
+    public static boolean getTrainInfo(BufferedWriter writer, String url, String phantomjsPath) {
 
         try {
             Runtime rt = Runtime.getRuntime();
@@ -24,6 +24,11 @@ public class GetTrainInfo {
 
 
             Elements tbody = Jsoup.parse(doc.toString(), "UTF-8").getElementsByClass("tbody");
+            if(tbody.size()==0){
+                System.out.println(url+"\nThe two stations has no direct train!\n");
+                return false;
+
+            }
 
             for (Element i : tbody) {
 
@@ -38,12 +43,12 @@ public class GetTrainInfo {
                 String arriveStation = stations[3];
 
 
-                System.out.print("train: " + train + "\t\t"); //车次
-                System.out.print("start time: " + startTime + "\t\t");
-                System.out.print("arrive time: " + arriveTime + "\t\t");
-                System.out.print("+" + day + "\t");
-                System.out.print("start station: " + startStation + "\t\t");
-                System.out.println("arrive station: " + arriveStation);          //
+//                System.out.print("train: " + train + "\t\t"); //车次
+//                System.out.print("start time: " + startTime + "\t\t");
+//                System.out.print("arrive time: " + arriveTime + "\t\t");
+//                System.out.print("+" + day + "\t");
+//                System.out.print("start station: " + startStation + "\t\t");
+//                System.out.println("arrive station: " + arriveStation);          //
 
 
                 writer.write(train + "," + startTime + "," + arriveTime + "," + day + "," + startStation + "," + arriveStation + "\n");
@@ -53,5 +58,7 @@ public class GetTrainInfo {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return true;
     }               //getTrainInfo
 }

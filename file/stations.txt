@@ -1,7 +1,7 @@
-北京,beijing
-大连,dalian
-郑州,zhengzhou
 兰州,lanzhou
+大连,dalian
+北京,beijing
+郑州,zhengzhou
 昆明,kunming
 广州,guangzhou
 哈尔滨,haerbin
