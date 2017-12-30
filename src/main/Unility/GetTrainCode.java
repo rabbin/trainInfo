@@ -5,17 +5,19 @@ import java.io.*;
 import java.util.LinkedList;
 
 public class GetTrainCode {
-    public static final String REGEX = "[|]+";
-    public static final String station = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\file\\station.txt";
-    public static final String stations = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\file\\stations.txt";
-    public static final String stationPairs = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\file\\stationPairs.txt";
-//    String url = "http://webresource.c-ctrip.com/ResTrainOnline/R1/TrainBooking/JS/station_gb2312.js";
     public static void main(String[] args) {
 
 //        GetTrainCode.getTrainCode(station,stations);
         GetTrainCode.getTrainPair(stations,stationPairs);
         System.out.println("###");
     }
+
+    public static final String REGEX = "[|]+";
+    public static final String station = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\file\\station.txt";
+    public static final String stations = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\file\\stations.txt";
+    public static final String stationPairs = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\file\\stationPairs.txt";
+//    String url = "http://webresource.c-ctrip.com/ResTrainOnline/R1/TrainBooking/JS/station_gb2312.js";
+
 
     public static void getTrainCode(String station,String stations) {
         String content = null;
@@ -44,7 +46,7 @@ public class GetTrainCode {
              BufferedWriter writer = new BufferedWriter(new FileWriter(new File(stationPairs)));) {
 
             LinkedList<String> stas = new LinkedList<String>();
-            String line = null;
+            String line;
 
             while ((line = reader.readLine()) != null) {
                 stas.add(line);

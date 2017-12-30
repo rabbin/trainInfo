@@ -3,6 +3,22 @@ package GetTrainInfo;
 import java.io.*;
 
 public class MultiThreadingGetTrainInfo {
+    public static void main(String[] agrs) {
+        Long begin = System.currentTimeMillis();
+
+        final String phantomjsPath = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\conf\\";
+        final String trainsInfo = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\file\\MultiThreading\\";
+        final String stationPairs = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\file\\stationPairs.txt";
+
+        new MultiThreadingGetTrainInfo(phantomjsPath, trainsInfo, stationPairs).begin();
+
+        Long end = System.currentTimeMillis();
+        Long time = (end - begin) / 1000;
+        System.out.println("The program has run " + time / 60 + " mins " + (end - begin) % 60 + " seconds");
+    }           //main
+
+
+
 
     private static final String splitChar = ",";
     private String phantomjsPath;
@@ -31,7 +47,7 @@ public class MultiThreadingGetTrainInfo {
             String url = "http://trains.ctrip.com/TrainBooking/Search.aspx?from=" + stations[1] + "&to=" + stations[3] + "&day=2";
             try{
                 if(GetTrainInfo.getTrainInfo(TrainInfoWriter, url, phantomjsPath)){
-                    StationsExitsWriter.write(stations[1]+","+stations[3]+"\n");
+                    StationsExitsWriter.write(line+"\n");
                     StationsExitsWriter.flush();
                 }
             }catch (Exception e){
@@ -100,21 +116,6 @@ public class MultiThreadingGetTrainInfo {
 
     }               //begin
 
-
-
-    public static void main(String[] agrs) {
-        Long begin = System.currentTimeMillis();
-
-        final String phantomjsPath = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\conf\\";
-        final String trainsInfo = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\file\\MultiThreading\\";
-        final String stationPairs = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\file\\stationPairs.txt";
-
-        new MultiThreadingGetTrainInfo(phantomjsPath, trainsInfo, stationPairs).begin();
-
-        Long end = System.currentTimeMillis();
-        Long time = (end - begin) / 1000;
-        System.out.println("The program has run " + time / 60 + " mins " + (end - begin) % 60 + " seconds");
-    }           //main
 
 
 }

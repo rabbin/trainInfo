@@ -8,6 +8,23 @@ import scala.Tuple3;
 import java.io.File;
 
 public class Compare {
+    /**
+     *
+     * @param args
+     */
+    public static void main(String[] args) {
+        Long begin = System.currentTimeMillis();
+        String SparkTrainInfo = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\file\\Spark\\";
+        String MultiThreadingTrainInfo = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\file\\MultiThreading\\";
+
+        new Compare(SparkTrainInfo, MultiThreadingTrainInfo).begin();
+        Long end = System.currentTimeMillis();
+        Long time = (end - begin) / 1000;
+        System.out.println("----------------------------------------");
+        System.out.println();
+        System.out.println("The program has run " + time / 60 + " mins " + (end - begin) % 60 + " seconds");
+    }
+
 
     private static String SparkTrainInfo;
     private static String MultiThreadingTrainInfo;
@@ -113,21 +130,6 @@ public class Compare {
         return new Tuple3<String, String, String>(info[0], info[4], info[5]);
     }
 
-    /**
-     *
-     * @param args
-     */
-    public static void main(String[] args) {
-        Long begin = System.currentTimeMillis();
-        String SparkTrainInfo = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\file\\Spark\\";
-        String MultiThreadingTrainInfo = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\file\\MultiThreading\\";
 
-        new Compare(SparkTrainInfo, MultiThreadingTrainInfo).begin();
-        Long end = System.currentTimeMillis();
-        Long time = (end - begin) / 1000;
-        System.out.println("----------------------------------------");
-        System.out.println();
-        System.out.println("The program has run " + time / 60 + " mins " + (end - begin) % 60 + " seconds");
-    }
 
 }
