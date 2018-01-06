@@ -9,15 +9,14 @@ import java.io.File;
 
 public class Compare {
     /**
-     *
      * @param args
      */
     public static void main(String[] args) {
         Long begin = System.currentTimeMillis();
-        String SparkTrainInfo = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\file\\Spark\\";
-        String MultiThreadingTrainInfo = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\file\\MultiThreading\\";
+        String SparkTrainInfo = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\SparkTrain\\";
 
-        new Compare(SparkTrainInfo, MultiThreadingTrainInfo).begin();
+
+        new Compare(SparkTrainInfo).begin();
         Long end = System.currentTimeMillis();
         Long time = (end - begin) / 1000;
         System.out.println("----------------------------------------");
@@ -27,11 +26,9 @@ public class Compare {
 
 
     private static String SparkTrainInfo;
-    private static String MultiThreadingTrainInfo;
 
-    Compare(String SparkTrainInfo, String MultiThreadingTrainInfo) {
+    Compare(String SparkTrainInfo) {
         this.SparkTrainInfo = SparkTrainInfo;
-        this.MultiThreadingTrainInfo = MultiThreadingTrainInfo;
     }
 
 
@@ -49,26 +46,14 @@ public class Compare {
         /**
          * 合并所有由spark获得的火车信息
          */
-        System.out.println("Now is in the directory of Spark\\tarininfo:");
+        System.out.println("Now is in the directory of Spark\\traininfo:");
         PrintTitle(1);
         for (String result : new File(SparkTrainInfo + "traininfo").list()) {
             JavaRDD<String> train = sparkSession.read().textFile(SparkTrainInfo + "traininfo\\" + result).javaRDD();
-            System.out.println("\t"+result + "\t" + train.count());
+            System.out.println("\t" + result + "\t" + train.count());
             sparkTrainInfo = sparkTrainInfo.union(train).distinct();
         }
-        /**
-         * 合并所有由multiThreading获得的火车信息
-         */
-        System.out.println("----------------------------------------");
-        System.out.println("Now is in the directory of MutiThreading\\traininfo:");
-        PrintTitle(1);
-        for (String result : new File(MultiThreadingTrainInfo + "traininfo").list()) {
-            JavaRDD<String> train = sparkSession.read().textFile(MultiThreadingTrainInfo + "traininfo\\" + result).javaRDD();
-            System.out.println("\t"+result + "\t" + train.count());
-            mutiThreadingTrainInfo = mutiThreadingTrainInfo.union(train).distinct();
-        }
-        System.out.println("----------------------------------------");
-        System.out.println("########################################");
+
         System.out.println("----------------------------------------");
         /**
          * 合并由spark获得的有直达列车的车站信息
@@ -78,21 +63,10 @@ public class Compare {
 
         for (String result : new File(SparkTrainInfo + "stations").list()) {
             JavaRDD<String> stations = sparkSession.read().textFile(SparkTrainInfo + "stations\\" + result).javaRDD();
-            System.out.println("\t"+result + "\t" + stations.count());
+            System.out.println("\t" + result + "\t" + stations.count());
             sparkStations = sparkStations.union(stations).distinct();
         }
-        System.out.println("----------------------------------------");
-        /**
-         * 合并由multiThreading获得的有直达列车的车站信息
-         */
-        System.out.println("Now is in the directory of MutiThreading\\stations:");
-        PrintTitle(2);
-        for (String result : new File(MultiThreadingTrainInfo + "stations").list()) {
-            JavaRDD<String> stations=sparkSession.read().textFile(MultiThreadingTrainInfo + "stations\\" + result).javaRDD();
-            System.out.println("\t"+result + "\t" + stations.count());
-            mutiThreadingStations = mutiThreadingStations.union(stations).distinct();
-
-        }
+//        System.out.println("----------------------------------------");
 
         /**
          * 输出结果
@@ -109,19 +83,17 @@ public class Compare {
     }
 
     /**
-     *
      * @param flag
      */
     private void PrintTitle(int flag) {
         if (flag == 1) {
-            System.out.println("\t"+"File\ttrains num");
+            System.out.println("\t" + "File\ttrains num");
         } else if (flag == 2) {
-            System.out.println("\t"+"File\tstations num");
+            System.out.println("\t" + "File\tstations num");
         }
     }
 
     /**
-     *
      * @param line
      * @return
      */
@@ -129,7 +101,6 @@ public class Compare {
         String[] info = line.split(",");
         return new Tuple3<String, String, String>(info[0], info[4], info[5]);
     }
-
 
 
 }

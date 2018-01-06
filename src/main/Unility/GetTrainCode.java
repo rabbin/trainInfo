@@ -13,9 +13,9 @@ public class GetTrainCode {
     }
 
     public static final String REGEX = "[|]+";
-    public static final String station = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\file\\station.txt";
-    public static final String stations = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\file\\stations.txt";
-    public static final String stationPairs = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\file\\stationPairs.txt";
+    public static final String station = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\SparkTrain\\station.txt";
+    public static final String stations = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\SparkTrain\\stations.txt";
+    public static final String stationPairs = "C:\\Users\\rabbin\\Desktop\\spark\\rabbin\\SparkTrain\\stationPairs.txt";
 //    String url = "http://webresource.c-ctrip.com/ResTrainOnline/R1/TrainBooking/JS/station_gb2312.js";
 
 
@@ -49,7 +49,7 @@ public class GetTrainCode {
             String line;
 
             while ((line = reader.readLine()) != null) {
-                stas.add(line);
+                stas.add(line.split(",")[1]);
             }
 
             for (int i = 0; i < stas.size(); i++) {
